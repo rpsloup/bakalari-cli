@@ -18,6 +18,14 @@ type Teacher = {
   Name: string;
 };
 
+type MarkEntry = {
+  Marks: any[];
+  Subject: {
+    Abbrev: string;
+  };
+  AverageText: string;
+};
+
 const logWelcomeMessage = (): void => {
   console.log('Bakaláři CLI\n');
 }
@@ -46,7 +54,7 @@ const getAccessToken = async (auth: UserAuth): Promise<string> => {
   return data?.access_token ?? '';
 }
 
-const getTeacherList = async (token: string): Promise<Teacher[]> => {
+const getTeachers = async (token: string): Promise<Teacher[]> => {
   const res = await fetch(`${bakalariUrl}/api/3/timetable/actual`, {
     method: 'get',
     headers: {
@@ -54,8 +62,20 @@ const getTeacherList = async (token: string): Promise<Teacher[]> => {
       'Authorization': `Bearer ${token}`,
     },
   });
-  const data = await res.json();
-  return data?.Teachers ?? [];
+  const teacherData = await res.json();
+  return teacherData?.Teachers ?? [];
+}
+
+const getMarkEntries = async (token: string): Promise<MarkEntry[]> => {
+  const res = await fetch(`${bakalariUrl}/api/3/marks`, {
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  const markData = await res.json();
+  return markData?.Subjects ?? [];
 }
 
 const getCommand = (userName: string): string[] => {
@@ -69,8 +89,13 @@ const handleCommand = async (command: string[], token: string) => {
 
   switch (command[0]) {
     case 'teachers':
-      const teachers: Teacher[] = await getTeacherList(token);
+      const teachers: Teacher[] = await getTeachers(token);
       teachers.forEach(teacher => console.log(`${teacher.Abbrev} - ${teacher.Name}`));
+      break;
+
+    case 'marks':
+      const markEntries: MarkEntry[] = await getMarkEntries(token);
+      markEntries.forEach(markEntry => console.log(`${markEntry.Subject.Abbrev} - ${markEntry.AverageText}`));
       break;
 
     default:
