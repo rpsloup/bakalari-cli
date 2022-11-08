@@ -41,6 +41,31 @@ type MarkEntry = {
   AverageText: string;
 };
 
+type TimeTable = {
+  Days: {
+    Atoms: {
+      HourId: number;
+      SubjectId: number;
+      Change: {
+        ChangeType: string;
+      } | null;
+    }[];
+    DayOfWeek: number;
+    Date: string;
+    DayType: string;
+  }[];
+  Subjects: {
+    Id: number;
+    Abbrev: string;
+    Name: string;
+  }[];
+  Hours: {
+    Id: number;
+    BeginTime: string;
+    EndTime: string;
+  }[];
+};
+
 const logWelcomeMessage = (): void => {
   console.log('Bakaláři CLI\n');
 }
@@ -93,6 +118,38 @@ const getMarkEntries = async (token: string): Promise<MarkEntry[]> => {
   return markData?.Subjects ?? [];
 }
 
+const getTimeTable = async (token: string): Promise<TimeTable | null> => {
+  const res = await fetch(`${bakalariUrl}/api/3/timetable/actual`, {
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  const timeTableData = await res.json();
+  return timeTableData ?? null;
+}
+
+const drawTimeTable = (timeTable: TimeTable) => {
+  timeTable.Days.forEach(day => {
+    let row = ''
+    day.Atoms.forEach(atom => {
+      if (!atom.Change) {
+        row += timeTable?.Subjects?.find(subject => subject.Id === atom.SubjectId)?.Abbrev + ' ';
+      } else {
+        switch (atom.Change.ChangeType) {
+          case 'Canceled':
+            row += 'ODP ';
+            break;
+        }
+      }
+    });
+    console.log(row);
+  });
+  timeTable.Hours.forEach(hour => console.log(`${hour.Id} ${hour.BeginTime} ${hour.EndTime}`))
+  console.log(timeTable.Days[1].Atoms);
+}
+
 const handleCommand = async (command: string[], token: string) => {
   if (command.length === 0) return;
 
@@ -107,7 +164,10 @@ const handleCommand = async (command: string[], token: string) => {
       markEntries.forEach(markEntry => console.log(`${markEntry.Subject.Abbrev} - ${markEntry.AverageText}`));
       break;
 
-    default:
+    case 'timetable':
+      const timeTable = await getTimeTable(token);
+      if (!timeTable) return;
+      drawTimeTable(timeTable);
       break;
   }
 }
