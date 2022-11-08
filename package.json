@@ -1,0 +1,9 @@
+{
+  "name": "bakalari-cli",
+  "version": "1.0.0",
+  "main": "src/main.ts",
+  "repository": "git@github.com:rpsloup/bakalari-cli.git",
+  "author": "rpsloup <robin.patrik.sloup@proton.me>",
+  "license": "MIT",
+  "private": false
+}
