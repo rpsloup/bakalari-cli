@@ -11,9 +11,11 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "node-fetch": "2.6.7"
+    "node-fetch": "2.6.7",
+    "prompt-sync": "^4.2.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "2.x"
+    "@types/node-fetch": "2.x",
+    "@types/prompt-sync": "^4.2.0"
   }
 }
