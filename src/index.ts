@@ -1,6 +1,10 @@
 import fetch from 'node-fetch';
 import promptSync from 'prompt-sync';
 
+import type { UserAuth } from './typings/authTypes';
+import type { Teacher, Hour, TimeTable } from './typings/timeTableTypes';
+import type { MarkEntry } from './typings/markTypes';
+
 const prompt = promptSync();
 
 const bakalariUrl: string = 'https://sbakalari.gasos-ro.cz';
@@ -21,53 +25,6 @@ class Shell {
   }
 }
 export const shell = new Shell(commandPrompt);
-
-type UserAuth = {
-  userName: string;
-  userPassword: string;
-};
-
-type Teacher = {
-  Id: string;
-  Abbrev: string;
-  Name: string;
-};
-
-type Hour = {
-  Id: number;
-  BeginTime: string;
-  EndTime: string;
-};
-
-type MarkEntry = {
-  Marks: any[];
-  Subject: {
-    Abbrev: string;
-  };
-  AverageText: string;
-};
-
-type TimeTable = {
-  Days: {
-    Atoms: {
-      HourId: number;
-      SubjectId: number;
-      Change: {
-        ChangeType: string;
-      } | null;
-    }[];
-    DayOfWeek: number;
-    Date: string;
-    DayType: string;
-  }[];
-  Subjects: {
-    Id: number;
-    Abbrev: string;
-    Name: string;
-  }[];
-  Teachers: Teacher[];
-  Hours: Hour[];
-};
 
 const logWelcomeMessage = (): void => {
   console.log('Bakaláři CLI\n');
