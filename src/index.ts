@@ -179,6 +179,10 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
     case 'rmcache':
       deleteLoginInfo();
       break;
+
+    default:
+      console.log(`Unknown command: ${command.command[0]}`);
+      break;
   }
 }
 
