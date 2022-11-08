@@ -1,7 +1,11 @@
 {
   "name": "bakalari-cli",
   "version": "1.0.0",
-  "main": "src/main.ts",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts"
+  },
   "repository": "git@github.com:rpsloup/bakalari-cli.git",
   "author": "rpsloup <robin.patrik.sloup@proton.me>",
   "license": "MIT",
