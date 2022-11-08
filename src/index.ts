@@ -7,7 +7,6 @@ import type { MarkEntry } from './typings/markTypes';
 
 const prompt = promptSync();
 
-const bakalariUrl: string = 'https://sbakalari.gasos-ro.cz';
 const inputPrompt = '> ';
 const commandPrompt = '$ ';
 
@@ -31,19 +30,22 @@ const logWelcomeMessage = (): void => {
 }
 
 const getUserAuth = async (): Promise<UserAuth> => {
+  console.log('Enter the Bakaláři URL');
+  let apiEndpoint = prompt(inputPrompt);
   console.log('Enter your username');
   let userName = prompt(inputPrompt);
   console.log('Enter your password');
   let userPassword = prompt(inputPrompt);
 
   return {
+    apiEndpoint: apiEndpoint ?? '',
     userName: userName ?? '',
     userPassword: userPassword ?? '',
   };
 }
 
 const getAccessToken = async (auth: UserAuth): Promise<string> => {
-  const res = await fetch(`${bakalariUrl}/api/login`, {
+  const res = await fetch(`${auth.apiEndpoint}/api/login`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -54,8 +56,8 @@ const getAccessToken = async (auth: UserAuth): Promise<string> => {
   return data?.access_token ?? '';
 }
 
-const getTeachers = async (token: string): Promise<Teacher[]> => {
-  const res = await fetch(`${bakalariUrl}/api/3/timetable/actual`, {
+const getTeachers = async (endpoint: UserAuth['apiEndpoint'], token: string): Promise<Teacher[]> => {
+  const res = await fetch(`${endpoint}/api/3/timetable/actual`, {
     method: 'get',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -66,8 +68,8 @@ const getTeachers = async (token: string): Promise<Teacher[]> => {
   return teacherData?.Teachers ?? [];
 }
 
-const getMarkEntries = async (token: string): Promise<MarkEntry[]> => {
-  const res = await fetch(`${bakalariUrl}/api/3/marks`, {
+const getMarkEntries = async (endpoint: UserAuth['apiEndpoint'], token: string): Promise<MarkEntry[]> => {
+  const res = await fetch(`${endpoint}/api/3/marks`, {
     method: 'get',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -78,8 +80,8 @@ const getMarkEntries = async (token: string): Promise<MarkEntry[]> => {
   return markData?.Subjects ?? [];
 }
 
-const getTimeTable = async (token: string): Promise<TimeTable | null> => {
-  const res = await fetch(`${bakalariUrl}/api/3/timetable/actual`, {
+const getTimeTable = async (endpoint: UserAuth['apiEndpoint'], token: string): Promise<TimeTable | null> => {
+  const res = await fetch(`${endpoint}/api/3/timetable/actual`, {
     method: 'get',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -126,8 +128,8 @@ const drawTimeTable = (timeTable: TimeTable) => {
   });
 }
 
-const getHours = async (token: string): Promise<Hour[]> => {
-  const res = await fetch(`${bakalariUrl}/api/3/timetable/actual`, {
+const getHours = async (endpoint: UserAuth['apiEndpoint'], token: string): Promise<Hour[]> => {
+  const res = await fetch(`${endpoint}/api/3/timetable/actual`, {
     method: 'get',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -138,29 +140,29 @@ const getHours = async (token: string): Promise<Hour[]> => {
   return hourData?.Hours ?? [];
 }
 
-const handleCommand = async (command: string[], token: string) => {
+const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: string[], token: string) => {
   if (command.length === 0) return;
 
   switch (command[0]) {
     case 'teachers':
-      const teachers: Teacher[] = await getTeachers(token);
+      const teachers: Teacher[] = await getTeachers(endpoint, token);
       teachers.forEach(teacher => console.log(`${teacher.Abbrev} - ${teacher.Name}`));
       break;
 
     case 'marks':
-      const markEntries: MarkEntry[] = await getMarkEntries(token);
+      const markEntries: MarkEntry[] = await getMarkEntries(endpoint, token);
       markEntries.forEach(markEntry => console.log(`${markEntry.Subject.Abbrev} - ${markEntry.AverageText}`));
       break;
 
     case 'timetable':
-      const timeTable = await getTimeTable(token);
+      const timeTable = await getTimeTable(endpoint, token);
       if (!timeTable) return;
       drawTimeTable(timeTable);
       break;
 
     case 'hours':
-      const hours = await getHours(token);
-      hours.forEach(hour => console.log(`${hour.Id}: ${hour.BeginTime}-${hour.EndTime}`));
+      const hours = await getHours(endpoint, token);
+      hours.forEach(hour => console.log(`${hour.Id}.: ${hour.BeginTime}-${hour.EndTime}`));
       break;
   }
 }
@@ -180,6 +182,6 @@ const handleCommand = async (command: string[], token: string) => {
   while (appRunning) {
     const commandResult = shell.getCommand(userAuth.userName);
     if (commandResult.length > 0 && commandResult[0] === 'exit') return;
-    await handleCommand(commandResult, accessToken);
+    await handleCommand(userAuth.apiEndpoint, commandResult, accessToken);
   }
 })();
