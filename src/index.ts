@@ -131,23 +131,39 @@ const getTimeTable = async (token: string): Promise<TimeTable | null> => {
 }
 
 const drawTimeTable = (timeTable: TimeTable) => {
+  const longestSubjectName = timeTable.Subjects.reduce((previous, current) => (previous > current) ? previous : current).Abbrev.length;
+  let hourRow: string = '';
+  timeTable.Hours.forEach(hour => hourRow += String(hour.Id - 2).padEnd(longestSubjectName + 2, ' '));
+  console.log(hourRow);
+
   timeTable.Days.forEach(day => {
-    let row = ''
-    day.Atoms.forEach(atom => {
-      if (!atom.Change) {
-        row += timeTable?.Subjects?.find(subject => subject.Id === atom.SubjectId)?.Abbrev + ' ';
+    let row: string = '';
+    for (let i = 2; i < timeTable.Hours.length + 1; i++) {
+      const hour = day.Atoms.find(atom => atom.HourId === i);
+      if (!hour) {
+        row += ' '.repeat(longestSubjectName + 2);
+        continue;
+      }
+      
+      if (!hour.Change) {
+        row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + 2, ' ');
       } else {
-        switch (atom.Change.ChangeType) {
+        switch (hour.Change.ChangeType) {
           case 'Canceled':
-            row += 'ODP ';
+            row += 'ODP'.padEnd(longestSubjectName + 2, ' ');
             break;
+
+          case 'Substitution':
+            row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + 2, ' ');
+            break;
+            
+          default:
+            row += ' '.repeat(longestSubjectName + 2);
         }
       }
-    });
+    }
     console.log(row);
   });
-  timeTable.Hours.forEach(hour => console.log(`${hour.Id} ${hour.BeginTime} ${hour.EndTime}`))
-  console.log(timeTable.Days[1].Atoms);
 }
 
 const handleCommand = async (command: string[], token: string) => {
