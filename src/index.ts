@@ -95,37 +95,40 @@ const getTimeTable = async (endpoint: UserAuth['apiEndpoint'], token: string): P
   return timeTableData ?? null;
 }
 
-const drawTimeTable = (timeTable: TimeTable, options: { minimal: boolean }) => {
-  const longestSubjectName = timeTable.Subjects.reduce((previous, current) => (previous > current) ? previous : current).Abbrev.length;
+const drawTimeTable = (timeTable: TimeTable, options: { minimal: boolean, smallSpacing: boolean }) => {
+  const longestWorkDayName = WORK_DAYS.reduce((previous, current) => (previous.length > current.length) ? previous : current).length;
+  const longestSubjectName = timeTable.Subjects.reduce((previous, current) => (previous.Abbrev.length > current.Abbrev.length) ? previous : current).Abbrev.length;
+  const cellSpacing = options.smallSpacing ? 1 : 2;
+
   if (!options.minimal) {
-    let hourRow: string = '';
-    timeTable.Hours.forEach(hour => hourRow += String(hour.Id - 2).padEnd(longestSubjectName + 2, ' '));
+    let hourRow: string = ' '.repeat(longestWorkDayName + cellSpacing);
+    timeTable.Hours.forEach(hour => hourRow += String(hour.Id - 2).padEnd(longestSubjectName + cellSpacing, ' '));
     console.log(hourRow);
   }
 
   timeTable.Days.forEach((day, index) => {
-    let row: string = options.minimal ? '' : WORK_DAYS[day.DayOfWeek - 1] + ' ';
+    let row: string = options.minimal ? '' : WORK_DAYS[day.DayOfWeek - 1].padEnd(longestWorkDayName + cellSpacing, ' ');
     for (let i = 2; i < timeTable.Hours.length + 1; i++) {
       const hour = day.Atoms.find(atom => atom.HourId === i);
       if (!hour) {
-        row += ' '.repeat(longestSubjectName + 2);
+        row += ' '.repeat(longestSubjectName + cellSpacing);
         continue;
       }
       
       if (!hour.Change) {
-        row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + 2, ' ');
+        row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + cellSpacing, ' ');
       } else {
         switch (hour.Change.ChangeType) {
           case 'Canceled':
-            row += 'ODP'.padEnd(longestSubjectName + 2, ' ');
+            row += 'ODP'.padEnd(longestSubjectName + cellSpacing, ' ');
             break;
 
           case 'Substitution':
-            row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + 2, ' ');
+            row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + cellSpacing, ' ');
             break;
             
           default:
-            row += ' '.repeat(longestSubjectName + 2);
+            row += ' '.repeat(longestSubjectName + cellSpacing);
         }
       }
     }
@@ -164,6 +167,7 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
       if (!timeTable) return;
       drawTimeTable(timeTable, {
         minimal: command.options.includes('m'),
+        smallSpacing: command.options.includes('s'),
       });
       break;
 
