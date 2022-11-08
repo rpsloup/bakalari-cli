@@ -5,6 +5,7 @@ const prompt = promptSync();
 
 const bakalariUrl: string = 'https://sbakalari.gasos-ro.cz';
 const inputPrompt = '> ';
+const commandPrompt = '$ ';
 
 type UserAuth = {
   userName: string;
@@ -16,6 +17,10 @@ type Teacher = {
   Abbrev: string;
   Name: string;
 };
+
+const logWelcomeMessage = (): void => {
+  console.log('Bakaláři CLI\n');
+}
 
 const getUserAuth = async (): Promise<UserAuth> => {
   console.log('Enter your username');
@@ -53,9 +58,22 @@ const getTeacherList = async (token: string): Promise<Teacher[]> => {
   return data?.Teachers ?? [];
 }
 
+const getCommand = (userName: string): string[] => {
+  let command = prompt(`[${userName}@bakalari]${commandPrompt}`);
+  if (!command) return [];
+  return command.split(' ');
+}
+
 (async () => {
+  logWelcomeMessage();
   const userAuth: UserAuth = await getUserAuth();
   const accessToken: string = await getAccessToken(userAuth);
-  const teachers = await getTeacherList(accessToken);
-  teachers.forEach(teacher => console.log(`${teacher.Abbrev} - ${teacher.Name}`));
+
+  if (!accessToken) {
+    console.log('\nLogin failed.');
+    return;
+  }
+  console.log('\nSuccessfully logged in.\n');
+
+  getCommand(userAuth.userName);
 })();
