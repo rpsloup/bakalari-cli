@@ -11,6 +11,8 @@ import type { UserAuth } from './typings/authTypes';
 import type { Teacher, Hour, TimeTable } from './typings/timeTableTypes';
 import type { MarkEntry } from './typings/markTypes';
 
+const WORK_DAYS = ['Po', 'Út', 'St', 'Čt', 'Pá'];
+
 export const shell = new Shell();
 shell.setInputPrompt('> ');
 
@@ -93,14 +95,16 @@ const getTimeTable = async (endpoint: UserAuth['apiEndpoint'], token: string): P
   return timeTableData ?? null;
 }
 
-const drawTimeTable = (timeTable: TimeTable) => {
+const drawTimeTable = (timeTable: TimeTable, options: { minimal: boolean }) => {
   const longestSubjectName = timeTable.Subjects.reduce((previous, current) => (previous > current) ? previous : current).Abbrev.length;
-  let hourRow: string = '';
-  timeTable.Hours.forEach(hour => hourRow += String(hour.Id - 2).padEnd(longestSubjectName + 2, ' '));
-  console.log(hourRow);
+  if (!options.minimal) {
+    let hourRow: string = '';
+    timeTable.Hours.forEach(hour => hourRow += String(hour.Id - 2).padEnd(longestSubjectName + 2, ' '));
+    console.log(hourRow);
+  }
 
-  timeTable.Days.forEach(day => {
-    let row: string = '';
+  timeTable.Days.forEach((day, index) => {
+    let row: string = options.minimal ? '' : WORK_DAYS[day.DayOfWeek - 1] + ' ';
     for (let i = 2; i < timeTable.Hours.length + 1; i++) {
       const hour = day.Atoms.find(atom => atom.HourId === i);
       if (!hour) {
@@ -141,10 +145,10 @@ const getHours = async (endpoint: UserAuth['apiEndpoint'], token: string): Promi
   return hourData?.Hours ?? [];
 }
 
-const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: string[], token: string) => {
-  if (command.length === 0) return;
+const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { command: string[]; options: string[] }, token: string) => {
+  if (command.command.length === 0) return;
 
-  switch (command[0]) {
+  switch (command.command[0]) {
     case 'teachers':
       const teachers: Teacher[] = await getTeachers(endpoint, token);
       teachers.forEach(teacher => console.log(`${teacher.Abbrev} - ${teacher.Name}`));
@@ -158,7 +162,9 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: string[
     case 'timetable':
       const timeTable = await getTimeTable(endpoint, token);
       if (!timeTable) return;
-      drawTimeTable(timeTable);
+      drawTimeTable(timeTable, {
+        minimal: command.options.includes('m'),
+      });
       break;
 
     case 'hours':
@@ -195,7 +201,7 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: string[
   let appRunning: boolean = true;
   while (appRunning) {
     const commandResult = shell.getCommand();
-    if (commandResult.length > 0 && commandResult[0] === 'exit') return;
+    if (commandResult.command.length > 0 && commandResult.command[0] === 'exit') return;
     await handleCommand(userAuth.apiEndpoint, commandResult, accessToken);
   }
 })();
