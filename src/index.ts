@@ -1,29 +1,13 @@
 import fetch from 'node-fetch';
-import promptSync from 'prompt-sync';
+
+import { Shell } from './shell';
 
 import type { UserAuth } from './typings/authTypes';
 import type { Teacher, Hour, TimeTable } from './typings/timeTableTypes';
 import type { MarkEntry } from './typings/markTypes';
 
-const prompt = promptSync();
-
-const inputPrompt = '> ';
-const commandPrompt = '$ ';
-
-class Shell {
-  commandPrompt: string;
-
-  constructor(commandPrompt: string) {
-    this.commandPrompt = commandPrompt;
-  }
-
-  getCommand = (userName: string): string[] => {
-    let command = prompt(`[\x1b[36m${userName}\x1b[0m@\x1b[32mbakalari\x1b[0m]${this.commandPrompt}`);
-    if (!command) return [];
-    return command.toLowerCase().split(' ');
-  }
-}
-export const shell = new Shell(commandPrompt);
+export const shell = new Shell();
+shell.setInputPrompt('> ');
 
 const logWelcomeMessage = (): void => {
   console.log('Bakaláři CLI\n');
@@ -31,11 +15,11 @@ const logWelcomeMessage = (): void => {
 
 const getUserAuth = async (): Promise<UserAuth> => {
   console.log('Enter the Bakaláři URL');
-  let apiEndpoint = prompt(inputPrompt);
+  let apiEndpoint = shell.getInput();
   console.log('Enter your username');
-  let userName = prompt(inputPrompt);
+  let userName = shell.getInput();
   console.log('Enter your password');
-  let userPassword = prompt(inputPrompt);
+  let userPassword = shell.getInput();
 
   return {
     apiEndpoint: apiEndpoint ?? '',
@@ -178,9 +162,12 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: string[
   }
   console.log('\nSuccessfully logged in.\n');
 
+  shell.setUserName(userAuth.userName);
+  shell.setCommandPrompt('$ ');
+
   let appRunning: boolean = true;
   while (appRunning) {
-    const commandResult = shell.getCommand(userAuth.userName);
+    const commandResult = shell.getCommand();
     if (commandResult.length > 0 && commandResult[0] === 'exit') return;
     await handleCommand(userAuth.apiEndpoint, commandResult, accessToken);
   }
