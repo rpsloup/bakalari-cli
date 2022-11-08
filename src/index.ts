@@ -33,6 +33,12 @@ type Teacher = {
   Name: string;
 };
 
+type Hour = {
+  Id: number;
+  BeginTime: string;
+  EndTime: string;
+};
+
 type MarkEntry = {
   Marks: any[];
   Subject: {
@@ -59,11 +65,8 @@ type TimeTable = {
     Abbrev: string;
     Name: string;
   }[];
-  Hours: {
-    Id: number;
-    BeginTime: string;
-    EndTime: string;
-  }[];
+  Teachers: Teacher[];
+  Hours: Hour[];
 };
 
 const logWelcomeMessage = (): void => {
@@ -166,6 +169,18 @@ const drawTimeTable = (timeTable: TimeTable) => {
   });
 }
 
+const getHours = async (token: string): Promise<Hour[]> => {
+  const res = await fetch(`${bakalariUrl}/api/3/timetable/actual`, {
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  const hourData = await res.json();
+  return hourData?.Hours ?? [];
+}
+
 const handleCommand = async (command: string[], token: string) => {
   if (command.length === 0) return;
 
@@ -184,6 +199,11 @@ const handleCommand = async (command: string[], token: string) => {
       const timeTable = await getTimeTable(token);
       if (!timeTable) return;
       drawTimeTable(timeTable);
+      break;
+
+    case 'hours':
+      const hours = await getHours(token);
+      hours.forEach(hour => console.log(`${hour.Id}: ${hour.BeginTime}-${hour.EndTime}`));
       break;
   }
 }
