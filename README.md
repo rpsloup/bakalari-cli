@@ -38,7 +38,9 @@ yarn start
 
 Po spuštění aplikace ti budou položeny 3 dotazy. Jaké je URL tvé školy pro systém Bakaláři, tvé uživatelské jméno a tvé heslo.
 Tato data **nejsou nikde ukládána**, slouží *pouze pro tvorbu requestu* na samotné API. Po správném vyplnění musíš počkat několik
-vteřin na odpověď serveru. Pokud se login povedl, uvidíš prompt v ukázaném formátu -
+vteřin na odpověď serveru. Pokud se login povedl, uvidíš prompt v ukázaném formátu. Tvoje URL systému Bakaláři a uživatelské jméno se
+uloží do souboru `/data/auth.json`, abys tyto informace příště nemusel zadávat znovu. Složku lze vymazat manuálně nebo příkazem `rmcache`.
+
 ```
 Bakaláři CLI
 
@@ -65,4 +67,5 @@ Login failed.
 * `marks` - vypíše celkové průměry ze všech předmětů
 * `timetable` - vypíše aktuální rozvrh, platný pro momentální týden 
 * `hours` - vypíše časové rozmezí jednotlivých hodin
+* `rmcache` - vymaže složku `/data`, kde jsou uloženy přihlašovací informace
 * `exit` - ukončí aplikaci

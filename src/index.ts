@@ -1,6 +1,11 @@
 import fetch from 'node-fetch';
 
 import { Shell } from './shell';
+import {
+  loadLoginInfo,
+  saveLoginInfo,
+  deleteLoginInfo,
+} from './data';
 
 import type { UserAuth } from './typings/authTypes';
 import type { Teacher, Hour, TimeTable } from './typings/timeTableTypes';
@@ -13,7 +18,19 @@ const logWelcomeMessage = (): void => {
   console.log('Bakaláři CLI\n');
 }
 
-const getUserAuth = async (): Promise<UserAuth> => {
+const getUserAuth = async (loadedAuth: Omit<UserAuth, 'userPassword'> | null): Promise<UserAuth> => {
+  if (loadedAuth) {
+    console.log('Successfully loaded authentication info from the cache.');
+    console.log('You can delete your cache by using the rmcache command.\n');
+    console.log('Enter your password');
+    let userPassword = shell.getInput();
+
+    return {
+      ...loadedAuth,
+      userPassword: userPassword ?? '',
+    }
+  }
+
   console.log('Enter the Bakaláři URL');
   let apiEndpoint = shell.getInput();
   console.log('Enter your username');
@@ -148,12 +165,18 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: string[
       const hours = await getHours(endpoint, token);
       hours.forEach(hour => console.log(`${hour.Id}.: ${hour.BeginTime}-${hour.EndTime}`));
       break;
+
+    case 'rmcache':
+      deleteLoginInfo();
+      break;
   }
 }
 
 (async () => {
   logWelcomeMessage();
-  const userAuth: UserAuth = await getUserAuth();
+
+  const loadedAuth = loadLoginInfo();
+  const userAuth = await getUserAuth(loadedAuth);
   const accessToken: string = await getAccessToken(userAuth);
 
   if (!accessToken) {
@@ -161,6 +184,10 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: string[
     return;
   }
   console.log('\nSuccessfully logged in.\n');
+  saveLoginInfo({
+    apiEndpoint: userAuth.apiEndpoint,
+    userName: userAuth.userName,
+  });
 
   shell.setUserName(userAuth.userName);
   shell.setCommandPrompt('$ ');
