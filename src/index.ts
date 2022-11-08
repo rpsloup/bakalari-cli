@@ -61,7 +61,19 @@ const getTeacherList = async (token: string): Promise<Teacher[]> => {
 const getCommand = (userName: string): string[] => {
   let command = prompt(`[${userName}@bakalari]${commandPrompt}`);
   if (!command) return [];
-  return command.split(' ');
+  return command.toLowerCase().split(' ');
+}
+
+const handleCommand = (command: string[]) => {
+  if (command.length === 0) return;
+
+  switch (command[0]) {
+    case 'teachers':
+      break;
+
+    default:
+      break;
+  }
 }
 
 (async () => {
@@ -75,5 +87,10 @@ const getCommand = (userName: string): string[] => {
   }
   console.log('\nSuccessfully logged in.\n');
 
-  getCommand(userAuth.userName);
+  let appRunning: boolean = true;
+  while (appRunning) {
+    const commandResult = getCommand(userAuth.userName);
+    if (commandResult.length > 0 && commandResult[0] === 'exit') return;
+    handleCommand(commandResult);
+  }
 })();
