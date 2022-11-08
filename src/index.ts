@@ -7,6 +7,21 @@ const bakalariUrl: string = 'https://sbakalari.gasos-ro.cz';
 const inputPrompt = '> ';
 const commandPrompt = '$ ';
 
+class Shell {
+  commandPrompt: string;
+
+  constructor(commandPrompt: string) {
+    this.commandPrompt = commandPrompt;
+  }
+
+  getCommand = (userName: string): string[] => {
+    let command = prompt(`[\x1b[36m${userName}\x1b[0m@\x1b[32mbakalari\x1b[0m]${this.commandPrompt}`);
+    if (!command) return [];
+    return command.toLowerCase().split(' ');
+  }
+}
+export const shell = new Shell(commandPrompt);
+
 type UserAuth = {
   userName: string;
   userPassword: string;
@@ -78,12 +93,6 @@ const getMarkEntries = async (token: string): Promise<MarkEntry[]> => {
   return markData?.Subjects ?? [];
 }
 
-const getCommand = (userName: string): string[] => {
-  let command = prompt(`[${userName}@bakalari]${commandPrompt}`);
-  if (!command) return [];
-  return command.toLowerCase().split(' ');
-}
-
 const handleCommand = async (command: string[], token: string) => {
   if (command.length === 0) return;
 
@@ -116,7 +125,7 @@ const handleCommand = async (command: string[], token: string) => {
 
   let appRunning: boolean = true;
   while (appRunning) {
-    const commandResult = getCommand(userAuth.userName);
+    const commandResult = shell.getCommand(userAuth.userName);
     if (commandResult.length > 0 && commandResult[0] === 'exit') return;
     await handleCommand(commandResult, accessToken);
   }
