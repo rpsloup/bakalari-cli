@@ -64,11 +64,13 @@ const getCommand = (userName: string): string[] => {
   return command.toLowerCase().split(' ');
 }
 
-const handleCommand = (command: string[]) => {
+const handleCommand = async (command: string[], token: string) => {
   if (command.length === 0) return;
 
   switch (command[0]) {
     case 'teachers':
+      const teachers: Teacher[] = await getTeacherList(token);
+      teachers.forEach(teacher => console.log(`${teacher.Abbrev} - ${teacher.Name}`));
       break;
 
     default:
@@ -91,6 +93,6 @@ const handleCommand = (command: string[]) => {
   while (appRunning) {
     const commandResult = getCommand(userAuth.userName);
     if (commandResult.length > 0 && commandResult[0] === 'exit') return;
-    handleCommand(commandResult);
+    await handleCommand(commandResult, accessToken);
   }
 })();
