@@ -25,7 +25,7 @@ const getUserAuth = async (loadedAuth: Omit<UserAuth, 'userPassword'> | null): P
     console.log('Successfully loaded authentication info from the cache.');
     console.log('You can delete your cache by using the rmcache command.\n');
     console.log('Enter your password');
-    let userPassword = shell.getInput();
+    let userPassword = shell.getPassword();
 
     return {
       ...loadedAuth,
@@ -106,7 +106,7 @@ const drawTimeTable = (timeTable: TimeTable, options: { minimal: boolean, smallS
     console.log(hourRow);
   }
 
-  timeTable.Days.forEach((day, index) => {
+  timeTable.Days.forEach(day => {
     let row: string = options.minimal ? '' : WORK_DAYS[day.DayOfWeek - 1].padEnd(longestWorkDayName + cellSpacing, ' ');
     for (let i = 2; i < timeTable.Hours.length + 1; i++) {
       const hour = day.Atoms.find(atom => atom.HourId === i);

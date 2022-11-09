@@ -30,6 +30,13 @@ export class Shell {
     return input;
   }
 
+  getPassword = (): string => {
+    const password = prompt(this.inputPrompt, {
+      echo: '*',
+    });
+    return password;
+  }
+
   getCommand = (): {
     command: string[];
     options: string[];
