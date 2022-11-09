@@ -60,7 +60,14 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.9.tgz#02d013de7058cea16d36168ef2fc653464cfbad4"
   integrity sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==
 
-"@types/prompt-sync@^4.2.0":
+"@types/prompt-sync-history@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/prompt-sync-history/-/prompt-sync-history-1.0.1.tgz#041c8b0bfe3feb265951282f7f561b2d44d54dcf"
+  integrity sha512-2Syf5JRNbEVjqCN1mmktglKk+y4e0F9bFwdUnsjDxfcb3xxsO50iqg89pilsh9zUGTb9Nj1gxiIRnblOvdCEFA==
+  dependencies:
+    "@types/prompt-sync" "*"
+
+"@types/prompt-sync@*", "@types/prompt-sync@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@types/prompt-sync/-/prompt-sync-4.2.0.tgz#e0bcf80211e9a2edb52891926a0700b2bffe08cb"
   integrity sha512-5RPQYDT7MNkt+vq6xp58tSPx4THANyQcBSaw3Ni+KV7MUAgvUUbmCsQmcPVrcc8dwuURSPixz2qTJdJF6ABSKw==
@@ -144,6 +151,11 @@ node-fetch@2.6.7:
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
   dependencies:
     whatwg-url "^5.0.0"
+
+prompt-sync-history@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/prompt-sync-history/-/prompt-sync-history-1.0.1.tgz#d02edf18cc03b8932867156c292274ba2c0050fd"
+  integrity sha512-R51qH1GbLvsSImtOLv+VGbO0Rv3uRYg5UxIGT82AotP/2AcOQaQSG4pYxDlMphZKgsmGSKRS+t0AmaPG/p4Gig==
 
 prompt-sync@^4.2.0:
   version "4.2.0"

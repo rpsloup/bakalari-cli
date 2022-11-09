@@ -1,6 +1,9 @@
 import promptSync from 'prompt-sync';
+import promptSyncHistory from 'prompt-sync-history';
 
-const prompt = promptSync();
+const prompt = promptSync({
+  history: promptSyncHistory(),
+});
 
 export class Shell {
   userName: string;
