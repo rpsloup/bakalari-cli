@@ -49,7 +49,7 @@ Enter the Bakaláři URL
 Enter your username
 > Jan25714
 Enter your password
-> 2c798xU1
+> ********
 
 Successfully logged in.
 
