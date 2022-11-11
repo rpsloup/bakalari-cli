@@ -10,6 +10,7 @@ import {
 import type { UserAuth } from './typings/authTypes';
 import type { Teacher, Hour, TimeTable } from './typings/timeTableTypes';
 import type { MarkEntry } from './typings/markTypes';
+import type { Absence } from './typings/absenceTypes';
 
 const WORK_DAYS = ['Po', 'Út', 'St', 'Čt', 'Pá'];
 
@@ -38,7 +39,7 @@ const getUserAuth = async (loadedAuth: Omit<UserAuth, 'userPassword'> | null): P
   console.log('Enter your username');
   let userName = shell.getInput();
   console.log('Enter your password');
-  let userPassword = shell.getInput();
+  let userPassword = shell.getPassword();
 
   return {
     apiEndpoint: apiEndpoint ?? '',
@@ -148,6 +149,18 @@ const getHours = async (endpoint: UserAuth['apiEndpoint'], token: string): Promi
   return hourData?.Hours ?? [];
 }
 
+const getAbsence = async (endpoint: UserAuth['apiEndpoint'], token: string): Promise<Absence['AbsencesPerSubject']> => {
+  const res = await fetch(`${endpoint}/api/3/absence/student`, {
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  const absenceData = await res.json();
+  return absenceData?.AbsencesPerSubject ?? [];
+}
+
 const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { command: string[]; options: string[] }, token: string) => {
   if (command.command.length === 0) return;
 
@@ -175,6 +188,22 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
       const hours = await getHours(endpoint, token);
       hours.forEach(hour => console.log(`${hour.Id}.: ${hour.BeginTime}-${hour.EndTime}`));
       break;
+
+    case 'absence':
+      const absence = await getAbsence(endpoint, token);
+      absence.forEach(absenceEntry => {
+        const totalSubjectAbsence = absenceEntry.Base;
+        const subjectAbsencePercentage = absenceEntry.LessonsCount > 0 ? (totalSubjectAbsence / absenceEntry.LessonsCount * 100).toFixed(2) : (0).toFixed(2);
+        let finalOutput = `${absenceEntry?.SubjectName} - ${subjectAbsencePercentage}% (`;
+        finalOutput += `${totalSubjectAbsence}; `;
+        finalOutput += `\x1b[32m${absenceEntry.Base}\x1b[0m; `;
+        finalOutput += `\x1b[36m${absenceEntry.School}\x1b[0m; `;
+        finalOutput += `\x1b[31m${absenceEntry.Late}\x1b[0m; `;
+        finalOutput += `\x1b[33m${absenceEntry.Soon}\x1b[0m)`;
+        console.log(finalOutput);
+      });
+      break;
+
 
     case 'rmcache':
       deleteLoginInfo();

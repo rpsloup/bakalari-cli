@@ -67,5 +67,6 @@ Login failed.
 * `marks` - vypíše celkové průměry ze všech předmětů
 * `timetable` - vypíše aktuální rozvrh, platný pro momentální týden 
 * `hours` - vypíše časové rozmezí jednotlivých hodin
+* `absence` - vypíše absenci v jednotlivých hodinách
 * `rmcache` - vymaže složku `/data`, kde jsou uloženy přihlašovací informace
 * `exit` - ukončí aplikaci
