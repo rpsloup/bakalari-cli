@@ -13,9 +13,11 @@ import type { MarkEntry } from './typings/markTypes';
 import type { Absence } from './typings/absenceTypes';
 
 const WORK_DAYS = ['Po', 'Út', 'St', 'Čt', 'Pá'];
+const HOSTNAME = 'bakalari';
 
 export const shell = new Shell();
 shell.setInputPrompt('> ');
+shell.setHostName(HOSTNAME);
 
 const logWelcomeMessage = (): void => {
   console.log('Bakaláři CLI\n');
@@ -206,6 +208,9 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
       });
       break;
 
+    case 'hostname':
+      console.log(shell.hostName);
+      break;
 
     case 'rmcache':
       deleteLoginInfo();

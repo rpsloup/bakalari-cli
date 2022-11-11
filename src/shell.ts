@@ -9,11 +9,13 @@ export class Shell {
   userName: string;
   inputPrompt: string;
   commandPrompt: string;
+  hostName: string;
 
   constructor() {
     this.userName = 'username';
     this.inputPrompt = '> ';
     this.commandPrompt = '> ';
+    this.hostName = 'hostname';
   }
 
   setUserName = (userName: string) => {
@@ -28,6 +30,10 @@ export class Shell {
     this.commandPrompt = prompt;
   }
 
+  setHostName = (hostName: string) => {
+    this.hostName = hostName;
+  }
+  
   getInput = (): string => {
     const input = prompt(this.inputPrompt);
     return input;
@@ -45,7 +51,7 @@ export class Shell {
     options: string[];
   } => {
     let options: string[] = [];
-    let command = prompt(`[\x1b[36m${this.userName}\x1b[0m@\x1b[32mbakalari\x1b[0m]${this.commandPrompt}`);
+    let command = prompt(`[\x1b[36m${this.userName}\x1b[0m@\x1b[32m${this.hostName}\x1b[0m]${this.commandPrompt}`);
     let splitCommand: string[] = command ? command.toLowerCase().split(' ') : [];
 
     if (splitCommand) {
