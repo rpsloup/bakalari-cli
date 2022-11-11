@@ -191,10 +191,12 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
 
     case 'absence':
       const absence = await getAbsence(endpoint, token);
+      const longestSubjectName = absence.reduce((previous, current) => (previous.SubjectName.length > previous.SubjectName.length) ? previous : current).SubjectName.length;
+
       absence.forEach(absenceEntry => {
         const totalSubjectAbsence = absenceEntry.Base;
         const subjectAbsencePercentage = absenceEntry.LessonsCount > 0 ? (totalSubjectAbsence / absenceEntry.LessonsCount * 100).toFixed(2) : (0).toFixed(2);
-        let finalOutput = `${absenceEntry?.SubjectName} - ${subjectAbsencePercentage}% (`;
+        let finalOutput = `${command.options.includes('m') ? absenceEntry?.SubjectName : absenceEntry?.SubjectName?.padEnd(longestSubjectName, ' ')} - ${subjectAbsencePercentage}% (`;
         finalOutput += `${totalSubjectAbsence}; `;
         finalOutput += `\x1b[32m${absenceEntry.Base}\x1b[0m; `;
         finalOutput += `\x1b[36m${absenceEntry.School}\x1b[0m; `;
