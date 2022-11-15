@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import type { UserAuth } from './typings/authTypes'
+import type { UserAuth } from '../typings/authTypes'
 
 const DATA_FOLDER = 'data';
 
