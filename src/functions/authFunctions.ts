@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 import { shell } from '..';
 
 import type { UserAuth } from '../typings/authTypes';
