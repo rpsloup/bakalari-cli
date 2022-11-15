@@ -1,5 +1,8 @@
 export type MarkEntry = {
-  Marks: any[];
+  Marks: {
+    MarkText: string;
+    Weight: number;
+  }[];
   Subject: {
     Abbrev: string;
   };

@@ -86,6 +86,19 @@ const getMarkEntries = async (endpoint: UserAuth['apiEndpoint'], token: string):
   return markData?.Subjects ?? [];
 }
 
+const getSubjectMarks = async (endpoint: UserAuth['apiEndpoint'], token: string, subject: string): Promise<MarkEntry['Marks']> => {
+  const res = await fetch(`${endpoint}/api/3/marks`, {
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  const markData = await res.json();
+  const subjectMarks = markData?.Subjects.find((markEntry: MarkEntry) => markEntry?.Subject?.Abbrev?.trim().toLowerCase() === subject);
+  return subjectMarks?.Marks ?? [];
+}
+
 const getTimeTable = async (endpoint: UserAuth['apiEndpoint'], token: string, options: string[]): Promise<TimeTable | null> => {
   const nextWeekDate = new Date();
   nextWeekDate.setDate(nextWeekDate.getDate() + 7);
@@ -178,8 +191,15 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
       break;
 
     case 'marks':
-      const markEntries: MarkEntry[] = await getMarkEntries(endpoint, token);
-      markEntries.forEach(markEntry => console.log(`${markEntry.Subject.Abbrev} - ${markEntry.AverageText}`));
+      if (command.command.length === 1) {
+        const markEntries: MarkEntry[] = await getMarkEntries(endpoint, token);
+        markEntries && markEntries.forEach(markEntry => console.log(`${markEntry.Subject.Abbrev} - ${markEntry.AverageText}`));
+      } else {
+        const marks: MarkEntry['Marks'] = await getSubjectMarks(endpoint, token, command.command[1].toLowerCase());
+        marks && marks.forEach(mark => {
+          console.log(`${mark.MarkText} (Váha: ${mark.Weight})`);
+        });
+      }
       break;
 
     case 'timetable':
