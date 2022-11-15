@@ -77,7 +77,7 @@ Login failed.
 * `rmcache` - vymaže složku `/data`, kde jsou uloženy přihlašovací informace
 * `exit` - ukončí aplikaci
 
-Některé příkazy podporují i možnosti, které upravují chování zvoleného příkazu, lze je přidat pomocí pomlčky, a to více možnostmi,
+Některé příkazy podporují i možnosti, které upravují chování zvoleného příkazu. Lze je přidat pomocí pomlčky, a to více možnostmi,
 podobně jako u normálních shellů -
 
 ```
