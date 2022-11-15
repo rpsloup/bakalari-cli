@@ -205,7 +205,7 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
       } else {
         const markData = await getSubjectMarks(endpoint, token, command.command[1].toLowerCase());
         markData?.subjectName && console.log(`${markData.subjectName}\n`);
-        const longestMarkLength = markData?.marks ? markData.marks.reduce((previous, current) => (previous.MarkText.length > current.MarkText.length) ? previous : current).MarkText.length : 0;
+        const longestMarkLength = markData?.marks?.length ? markData.marks.reduce((previous, current) => (previous.MarkText.length > current.MarkText.length) ? previous : current).MarkText.length : 0;
         markData && markData.marks && markData.marks.forEach(mark => {
           console.log(`${mark.MarkText.padEnd(longestMarkLength, ' ')} (Váha: ${mark.Weight})`);
         });
