@@ -1,10 +1,11 @@
 export type MarkEntry = {
   Marks: {
     MarkText: string;
-    Weight: number;
+    Weight: number; 
   }[];
   Subject: {
     Abbrev: string;
+    Name: string;
   };
   AverageText: string;
 };

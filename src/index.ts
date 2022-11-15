@@ -86,7 +86,11 @@ const getMarkEntries = async (endpoint: UserAuth['apiEndpoint'], token: string):
   return markData?.Subjects ?? [];
 }
 
-const getSubjectMarks = async (endpoint: UserAuth['apiEndpoint'], token: string, subject: string): Promise<MarkEntry['Marks']> => {
+const getSubjectMarks = async (endpoint: UserAuth['apiEndpoint'], token: string, subject: string): Promise<{
+  subjectName: MarkEntry['Subject']['Name'];
+  marks: MarkEntry['Marks'];
+  average: MarkEntry['AverageText'];
+}> => {
   const res = await fetch(`${endpoint}/api/3/marks`, {
     method: 'get',
     headers: {
@@ -96,7 +100,11 @@ const getSubjectMarks = async (endpoint: UserAuth['apiEndpoint'], token: string,
   });
   const markData = await res.json();
   const subjectMarks = markData?.Subjects.find((markEntry: MarkEntry) => markEntry?.Subject?.Abbrev?.trim().toLowerCase() === subject);
-  return subjectMarks?.Marks ?? [];
+  return {
+    subjectName: subjectMarks?.Subject?.Name,
+    marks: subjectMarks?.Marks ?? [],
+    average: subjectMarks?.AverageText ?? '',
+  };
 }
 
 const getTimeTable = async (endpoint: UserAuth['apiEndpoint'], token: string, options: string[]): Promise<TimeTable | null> => {
@@ -195,10 +203,13 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
         const markEntries: MarkEntry[] = await getMarkEntries(endpoint, token);
         markEntries && markEntries.forEach(markEntry => console.log(`${markEntry.Subject.Abbrev} - ${markEntry.AverageText}`));
       } else {
-        const marks: MarkEntry['Marks'] = await getSubjectMarks(endpoint, token, command.command[1].toLowerCase());
-        marks && marks.forEach(mark => {
-          console.log(`${mark.MarkText} (Váha: ${mark.Weight})`);
+        const markData = await getSubjectMarks(endpoint, token, command.command[1].toLowerCase());
+        markData?.subjectName && console.log(`${markData.subjectName}\n`);
+        const longestMarkLength = markData?.marks ? markData.marks.reduce((previous, current) => (previous.MarkText.length > current.MarkText.length) ? previous : current).MarkText.length : 0;
+        markData && markData.marks && markData.marks.forEach(mark => {
+          console.log(`${mark.MarkText.padEnd(longestMarkLength, ' ')} (Váha: ${mark.Weight})`);
         });
+        markData?.average && console.log(`\nPrůměr: ${markData.average.replace(',', '.')}`);
       }
       break;
 
