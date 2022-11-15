@@ -65,8 +65,25 @@ Login failed.
 
 * `teachers` - vypíše všechny učitele obsáhlé ve stálém rozvrhu
 * `marks` - vypíše celkové průměry ze všech předmětů
-* `timetable` - vypíše aktuální rozvrh, platný pro momentální týden 
+  * `marks PMT` - vypíše známky s jejich váhami podle zkratky předmětu
+  * `marks PMT -m` - nevypíše název předmětu a celkový průměr z něj
+* `timetable` - vypíše aktuální rozvrh, platný pro momentální týden
+  * `-n` - vypíše rozvrh pro další týden
+  * `-m` - nevypíše názvy dnů a čísla hodin
+  * `-s` - zmenší mezery mezi řádky a sloupci
 * `hours` - vypíše časové rozmezí jednotlivých hodin
 * `absence` - vypíše absenci v jednotlivých hodinách
+  * `-m` - minimalistický výpis
 * `rmcache` - vymaže složku `/data`, kde jsou uloženy přihlašovací informace
 * `exit` - ukončí aplikaci
+
+Některé příkazy podporují i možnosti, které upravují chování zvoleného příkazu, lze je přidat pomocí pomlčky, a to více možnostmi,
+podobně jako u normálních shellů -
+
+```
+prikaz -abc
+prikaz -a -b -c
+prikaz -c -ba
+```
+
+Každou z těchto variant považuje aplikace za stejnou. Je možné používat více možností najednou.
