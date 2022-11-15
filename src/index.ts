@@ -86,8 +86,13 @@ const getMarkEntries = async (endpoint: UserAuth['apiEndpoint'], token: string):
   return markData?.Subjects ?? [];
 }
 
-const getTimeTable = async (endpoint: UserAuth['apiEndpoint'], token: string): Promise<TimeTable | null> => {
-  const res = await fetch(`${endpoint}/api/3/timetable/actual`, {
+const getTimeTable = async (endpoint: UserAuth['apiEndpoint'], token: string, options: string[]): Promise<TimeTable | null> => {
+  const nextWeekDate = new Date();
+  nextWeekDate.setDate(nextWeekDate.getDate() + 7);
+  const nextWeekTimestamp = nextWeekDate.toISOString().split('T')[0];
+
+  const endpointPath = options.includes('n') ? `api/3/timetable/actual?date=${nextWeekTimestamp}` : 'api/3/timetable/actual';
+  const res = await fetch(`${endpoint}/${endpointPath}`, {
     method: 'get',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -178,7 +183,7 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
       break;
 
     case 'timetable':
-      const timeTable = await getTimeTable(endpoint, token);
+      const timeTable = await getTimeTable(endpoint, token, command.options);
       if (!timeTable) return;
       drawTimeTable(timeTable, {
         minimal: command.options.includes('m'),
@@ -210,7 +215,7 @@ const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: { comma
 
     case 'hostname':
       console.log(shell.hostName);
-      break;
+      break;  
 
     case 'rmcache':
       deleteLoginInfo();
