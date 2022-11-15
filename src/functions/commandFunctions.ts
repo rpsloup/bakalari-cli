@@ -31,12 +31,12 @@ export const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: 
         markEntries && markEntries.forEach(markEntry => console.log(`${markEntry.Subject.Abbrev} - ${markEntry.AverageText}`));
       } else {
         const markData = await getSubjectMarks(endpoint, token, command.command[1].toLowerCase());
-        markData?.subjectName && console.log(`${markData.subjectName}\n`);
+        markData?.subjectName && !command.options.includes('m') && console.log(`${markData.subjectName}\n`);
         const longestMarkLength = markData?.marks?.length ? markData.marks.reduce((previous, current) => (previous.MarkText.length > current.MarkText.length) ? previous : current).MarkText.length : 0;
         markData && markData.marks && markData.marks.forEach(mark => {
           console.log(`${mark.MarkText.padEnd(longestMarkLength, ' ')} (Váha: ${mark.Weight})`);
         });
-        markData?.average && console.log(`\nPrůměr: ${markData.average.replace(',', '.')}`);
+        markData?.average && !command.options.includes('m') && console.log(`\nPrůměr: ${markData.average.replace(',', '.')}`);
       }
       break;
 

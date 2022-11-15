@@ -65,7 +65,7 @@ export class Shell {
     }
 
     return {
-      command: splitCommand,
+      command: splitCommand.filter(element => !element.startsWith('-')),
       options,
     };
   }
