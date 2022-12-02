@@ -33,6 +33,10 @@ export const drawTimeTable = (timeTable: TimeTable, options: { minimal: boolean,
           case 'Substitution':
             row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + cellSpacing, ' ');
             break;
+
+          case 'Added':
+            row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + cellSpacing, ' ');
+            break;
             
           default:
             row += ' '.repeat(longestSubjectName + cellSpacing);
