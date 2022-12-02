@@ -52,6 +52,9 @@ Enter your username
 Enter your password
 > ********
 
+Do you want to save your password? [y/N]
+> n
+
 Successfully logged in.
 
 [Jan25714@bakalari]$
