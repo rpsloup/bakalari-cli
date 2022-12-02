@@ -39,7 +39,8 @@ yarn start
 Po spuštění aplikace ti budou položeny 3 dotazy. Jaké je URL tvé školy pro systém Bakaláři, tvé uživatelské jméno a tvé heslo.
 Tato data **nejsou nikde ukládána**, slouží *pouze pro tvorbu requestu* na samotné API. Po správném vyplnění musíš počkat několik
 vteřin na odpověď serveru. Pokud se login povedl, uvidíš prompt v ukázaném formátu. Tvoje URL systému Bakaláři a uživatelské jméno se
-uloží do souboru `/data/auth.json`, abys tyto informace příště nemusel zadávat znovu. Složku lze vymazat manuálně nebo příkazem `rmcache`.
+uloží do souboru `/data/auth.json`, abys tyto informace příště nemusel zadávat znovu. V případě, že jsi při přihlašování vybral, že
+chceš uložit i přihlašovací heslo, uloží se do stejného souboru v šifrovaném formátu. Složku lze vymazat manuálně nebo příkazem `rmcache`.
 
 ```
 Bakaláři CLI
