@@ -11,11 +11,13 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "node-fetch": "2.6.7",
     "prompt-sync": "^4.2.0",
     "prompt-sync-history": "^1.0.1"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
     "@types/node-fetch": "2.x",
     "@types/prompt-sync": "^4.2.0",
     "@types/prompt-sync-history": "^1.0.1",

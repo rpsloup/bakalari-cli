@@ -31,11 +31,25 @@ const logWelcomeMessage = (): void => {
     console.log('\nLogin failed.');
     return;
   }
+  if (!loadedAuth) {
+    console.log('\nDo you want to save your password? [y/N]');
+    const savePassword = shell.getInput();
+    if (savePassword.length === 0 || savePassword[0].toLowerCase() === 'y') {
+      saveLoginInfo({
+        apiEndpoint: userAuth.apiEndpoint,
+        userName: userAuth.userName,
+        userPassword: userAuth.userPassword,
+      });
+    } else {
+      saveLoginInfo({
+        apiEndpoint: userAuth.apiEndpoint,
+        userName: userAuth.userName,
+        userPassword: '',
+      });
+    }
+  }
+  
   console.log('\nSuccessfully logged in.\n');
-  saveLoginInfo({
-    apiEndpoint: userAuth.apiEndpoint,
-    userName: userAuth.userName,
-  });
 
   shell.setUserName(userAuth.userName);
   shell.setCommandPrompt('$ ');

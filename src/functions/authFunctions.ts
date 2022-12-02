@@ -4,12 +4,12 @@ import { shell } from '..';
 
 import type { UserAuth } from '../typings/authTypes';
 
-export const getUserAuth = async (loadedAuth: Omit<UserAuth, 'userPassword'> | null): Promise<UserAuth> => {
+export const getUserAuth = async (loadedAuth: UserAuth | null): Promise<UserAuth> => {
   if (loadedAuth) {
     console.log('Successfully loaded authentication info from the cache.');
-    console.log('You can delete your cache by using the rmcache command.\n');
-    console.log('Enter your password');
-    let userPassword = shell.getPassword();
+    console.log('You can delete your cache by using the rmcache command.');
+    !loadedAuth.userPassword && console.log('\nEnter your password');
+    let userPassword = loadedAuth.userPassword.length !== 0 ? loadedAuth.userPassword : shell.getPassword();
 
     return {
       ...loadedAuth,
