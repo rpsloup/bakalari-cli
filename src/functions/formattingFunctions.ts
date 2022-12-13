@@ -27,7 +27,11 @@ export const drawTimeTable = (timeTable: TimeTable, options: { minimal: boolean,
       } else {
         switch (hour.Change.ChangeType) {
           case 'Canceled':
-            row += 'ODP'.padEnd(longestSubjectName + cellSpacing, ' ');
+            if (!hour.Change?.TypeAbbrev) {
+              row += 'ODP'.padEnd(longestSubjectName + cellSpacing, ' ');
+              break;
+            }
+            row += hour.Change.TypeAbbrev.padEnd(longestSubjectName + cellSpacing, ' ');
             break;
 
           case 'Substitution':
