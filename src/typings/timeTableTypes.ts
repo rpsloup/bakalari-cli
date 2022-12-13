@@ -17,6 +17,7 @@ export type TimeTable = {
       SubjectId: number;
       Change: {
         ChangeType: string;
+        TypeAbbrev?: string;
       } | null;
     }[];
     DayOfWeek: number;
