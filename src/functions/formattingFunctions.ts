@@ -38,6 +38,10 @@ export const drawTimeTable = (timeTable: TimeTable, options: { minimal: boolean,
             row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + cellSpacing, ' ');
             break;
             
+          case 'RoomChanged':
+            row += timeTable?.Subjects?.find(subject => subject.Id === hour.SubjectId)?.Abbrev.padEnd(longestSubjectName + cellSpacing, ' ');
+            break;
+
           default:
             row += ' '.repeat(longestSubjectName + cellSpacing);
         }
