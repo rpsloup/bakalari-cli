@@ -51,7 +51,7 @@ export const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: 
 
     case 'hours':
       const hours = await getHours(endpoint, token);
-      hours.forEach(hour => console.log(`${hour.Id}.: ${hour.BeginTime}-${hour.EndTime}`));
+      hours.forEach(hour => console.log(`${hour.Id - hours[0].Id}.: ${hour.BeginTime}-${hour.EndTime}`));
       break;
 
     case 'absence':
