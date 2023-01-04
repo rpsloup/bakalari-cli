@@ -77,7 +77,7 @@ Login failed.
   * `-s` - zmenší mezery mezi řádky a sloupci
 * `hours` - vypíše časové rozmezí jednotlivých hodin
 * `absence` - vypíše absenci v jednotlivých hodinách
-  * `-m` - minimalistický výpis
+  * `-m` - minimalistický výpis (nepřidá spacing a nevypíše legendu)
 * `rmcache` - vymaže složku `/data`, kde jsou uloženy přihlašovací informace
 * `exit` - ukončí aplikaci
 
