@@ -58,6 +58,14 @@ export const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: 
       const absence = await getAbsence(endpoint, token);
       const longestSubjectName = absence.reduce((previous, current) => (previous.SubjectName.length > previous.SubjectName.length) ? previous : current).SubjectName.length;
 
+      if (!command.options.includes('m')) {
+        console.log('\x1b[32mOmluvená\x1b[0m');
+        console.log('Celková');
+        console.log('\x1b[36mNezapočtená\x1b[0m');
+        console.log('\x1b[31mPozdní příchod\x1b[0');
+        console.log('\x1b[33mBrzký odchod\x1b[0m\n');
+      }
+      
       absence.forEach(absenceEntry => {
         const totalSubjectAbsence = absenceEntry.Base;
         const subjectAbsencePercentage = absenceEntry.LessonsCount > 0 ? (totalSubjectAbsence / absenceEntry.LessonsCount * 100).toFixed(2) : (0).toFixed(2);
