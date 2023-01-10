@@ -34,7 +34,7 @@ export const handleCommand = async (endpoint: UserAuth['apiEndpoint'], command: 
         markData?.subjectName && !command.options.includes('m') && console.log(`${markData.subjectName}\n`);
         const longestMarkLength = markData?.marks?.length ? markData.marks.reduce((previous, current) => (previous.MarkText.length > current.MarkText.length) ? previous : current).MarkText.length : 0;
         markData && markData.marks && markData.marks.forEach(mark => {
-          console.log(`${mark.MarkText.padEnd(longestMarkLength, ' ')} (Váha: ${mark.Weight})`);
+          console.log(`${mark.MarkText.padEnd(longestMarkLength, ' ')} (Váha: ${mark.Weight}) ${mark.Caption}`);
         });
         markData?.average && !command.options.includes('m') && console.log(`\nPrůměr: ${markData.average.replace(',', '.')}`);
       }
